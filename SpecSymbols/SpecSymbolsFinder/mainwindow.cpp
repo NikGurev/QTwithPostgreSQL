@@ -20,16 +20,17 @@ MainWindow::MainWindow(QWidget *parent) :
     model->setHeaderData(3, Qt::Horizontal, "Значение");
     model->setHeaderData(4, Qt::Horizontal, "1й символ");
     model->setHeaderData(5, Qt::Horizontal, "Посл символ");
+    model->setHeaderData(6, Qt::Horizontal, "Таблица поиска")
 
     int rowItr = 0;
 
     if (QSqlDatabase::isDriverAvailable("QPSQL")){
         db = QSqlDatabase::addDatabase("QPSQL");
-        db.setHostName("192.168.100.234");
-        db.setPort(5432);
-        db.setDatabaseName("new_qBas");
+        db.setHostName("localhost");
+        db.setPort(5433);
+        db.setDatabaseName("testDB");
         db.setUserName("postgres");
-        db.setPassword("post812");
+        db.setPassword("root");
     }else{
         qDebug()<<"Не найден драйвер PSQL\n";
         QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
