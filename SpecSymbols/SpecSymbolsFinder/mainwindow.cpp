@@ -100,19 +100,139 @@ MainWindow::MainWindow(QWidget *parent) :
                           //Строки, в которые закидываем таблицу и id
                            QString find_id;
                            QString find_table="";
-                                if(tmpTable.contains('u')){
+                                if((tmpTable.startsWith("u_"))||(tmpTable.startsWith("tw_"))){
                                 QSqlQuery queryFindTable_Id;
-
-                                queryFindTable_Id.prepare("SELECT l_code FROM \"u_LinWU\" WHERE \"l_WU\" = :id ");
-                                queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                if(tmpTable=="u_LinWU"){
+                                    queryFindTable_Id.prepare("SELECT l_code FROM  \"u_LinWU\" WHERE l_code = :id ");
+                                    queryFindTable_Id.bindValue(":id",queryFindSpecSymbols.value(tmpID).toInt());
+                                }
+                                    else if (tmpTable=="u_Mag") {
+                                        queryFindTable_Id.prepare("SELECT l_code FROM \"u_LinWU\" WHERE l_child = :id");
+                                        queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                    }
+                                        else if (tmpTable=="tw_size") {
+                                            queryFindTable_Id.prepare("SELECT \"lwc_linWU\" FROM \"u_Config\" WHERE lwc_detail = :id LIMIT 1");
+                                            queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                        }
+                                            else  if(tmpTable=="u_WU"){
+                                                queryFindTable_Id.prepare("SELECT l_code FROM \"u_LinWU\" WHERE \"l_WU\" = :id");
+                                                queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                                }
+                                if(!queryFindTable_Id.exec()){
+                                    qDebug()<<queryFindTable_Id.lastError().text();
+                                    }else {
+                                        while(queryFindTable_Id.next())
+                                        find_id = queryFindTable_Id.value(queryFindTable_Id.record().field(0).name()).toString();
+                                        find_table ="u_LinWU";
+                                    }
+                            }
+                                if(tmpTable.startsWith("o_")){
+                                QSqlQuery queryFindTable_Id;
+                                    if(tmpTable=="o_Abonent"){
+                                        queryFindTable_Id.prepare("SELECT p_code FROM  \"o_Abonent\" WHERE p_code = :id ");
+                                        queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                    }
+                                        else if (tmpTable=="o_Object") {
+                                            queryFindTable_Id.prepare("SELECT o_abon FROM \"o_Object\" WHERE o_code = :id LIMIT 1");
+                                            queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                        }
                                 if(!queryFindTable_Id.exec()){
                                     qDebug()<<queryFindTable_Id.lastError().text();
                                 }else {
                                     while(queryFindTable_Id.next())
                                     find_id = queryFindTable_Id.value(queryFindTable_Id.record().field(0).name()).toString();
-                                    find_table ="u_LinWU";
+                                    find_table ="o_Abonent";
+                                    }
+                               }
+
+                                if(tmpTable.startsWith("n_")){
+                                QSqlQuery queryFindTable_Id;
+                                    if(tmpTable=="n_Order"){
+                                        queryFindTable_Id.prepare("SELECT na_code FROM  \"n_Order\" WHERE na_code = :id ");
+                                        queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                    }
+                                if(!queryFindTable_Id.exec()){
+                                    qDebug()<<queryFindTable_Id.lastError().text();
+                                }else {
+                                    while(queryFindTable_Id.next())
+                                    find_id = queryFindTable_Id.value(queryFindTable_Id.record().field(0).name()).toString();
+                                    find_table ="n_Order";
+                                 }
                                 }
-                            }
+
+                                if(tmpTable.startsWith("d_")){
+                                QSqlQuery queryFindTable_Id;
+                                    if(tmpTable=="d_Act"){
+                                        queryFindTable_Id.prepare("SELECT ac_code FROM  \"d_Act\" WHERE ac_code = :id ");
+                                        queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                    }
+                                        else if(tmpTable=="d_ActLin"){
+                                            queryFindTable_Id.prepare("SELECT \"acl_Act\" FROM  \"d_ActLin\" WHERE \"acl_Act\" = :id LIMIT 1 ");
+                                            queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                        }
+                                            else if(tmpTable=="d_Insp"){
+                                                queryFindTable_Id.prepare("SELECT ac_code FROM \"d_Act\" WHERE ac_insp = :id LIMIT 1 ");
+                                                queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                            }
+                                                else if(tmpTable=="d_Stamp"){
+                                                    queryFindTable_Id.prepare("SELECT s_act FROM \"d_Stamp\" WHERE s_act = :id LIMIT 1 ");
+                                                    queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                                }
+                                                    else if(tmpTable=="d_TypeWC"){
+                                                        queryFindTable_Id.prepare("SELECT \"acl_Act\" FROM  \"d_ActLin\" WHERE \"acl_WS\" = :id LIMIT 1 ");
+                                                        queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                                    }
+                                if(!queryFindTable_Id.exec()){
+                                    qDebug()<<queryFindTable_Id.lastError().text();
+                                }else {
+                                    while(queryFindTable_Id.next())
+                                    find_id = queryFindTable_Id.value(queryFindTable_Id.record().field(0).name()).toString();
+                                    find_table ="d_Act";
+                                 }
+                                }
+
+                                if(tmpTable.startsWith("a_")){
+                                QSqlQuery queryFindTable_Id;
+                                    if(tmpTable=="a_Adr_Bild"){
+                                        queryFindTable_Id.prepare("SELECT a_code FROM  \"a_Adr_Bild\" WHERE a_code = :id ");
+                                        queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                    }
+                                        else if(tmpTable=="a_Bilding"){
+                                            queryFindTable_Id.prepare("SELECT a_code FROM  \"a_Adr_Bild\" WHERE a_bild = :id LIMIT 1 ");
+                                            queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                        }
+                                            else if(tmpTable=="a_Complex"){
+                                                QSqlQuery queryPrefinderTable;
+                                                QString comp_id;
+                                                queryPrefinderTable.prepare("SELECT c_code FROM \"a_Complex\" WHERE c_code = :id ");
+                                                queryPrefinderTable.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                                if(queryPrefinderTable.exec()){
+                                                    while(queryPrefinderTable.next())
+                                                    {
+                                                        comp_id = queryPrefinderTable.value(queryPrefinderTable.record().field(0).name()).toString();
+                                                    }
+                                                }
+                                                    queryFindTable_Id.prepare("SELECT a_code FROM \"a_Adr_Bild\",\"a_Bilding\" "
+                                                                              "WHERE \"a_Adr_Bild\".a_bild = \"a_Bilding\".b_code "
+                                                                              "AND \"a_Bilding\".b_compl = :id ");
+                                                    queryFindTable_Id.bindValue(0,comp_id.toInt());
+                                            }
+                                                else if(tmpTable=="a_Street"){
+                                                    queryFindTable_Id.prepare("SELECT a_code FROM \"a_Adr_Bild\" WHERE a_street = :id LIMIT 1 ");
+                                                    queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                                }
+                                                    else if(tmpTable=="d_TypeWC"){
+                                                        queryFindTable_Id.prepare("SELECT \"acl_Act\" FROM  \"d_ActLin\" WHERE \"acl_WS\" = :id LIMIT 1 ");
+                                                        queryFindTable_Id.bindValue(0,queryFindSpecSymbols.value(tmpID).toInt());
+                                                    }
+                                if(!queryFindTable_Id.exec()){
+                                    qDebug()<<queryFindTable_Id.lastError().text();
+                                }else {
+                                    while(queryFindTable_Id.next())
+                                    find_id = queryFindTable_Id.value(queryFindTable_Id.record().field(0).name()).toString();
+                                    find_table ="a_Adr_Bild";
+                                 }
+                                }
                                 model->insertRow(rowItr,QList<QStandardItem*>()<<
                                                  new QStandardItem(tmpTable)<<
                                                  new QStandardItem(tmpField)<<
